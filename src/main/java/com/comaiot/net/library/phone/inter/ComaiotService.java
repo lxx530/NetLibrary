@@ -9,6 +9,7 @@ import com.comaiot.net.library.phone.bean.AppBindWeixinEntity;
 import com.comaiot.net.library.phone.bean.AppChangeAccountInfoEntity;
 import com.comaiot.net.library.phone.bean.AppChangePasswordEntity;
 import com.comaiot.net.library.phone.bean.AppChangePhoneEntity;
+import com.comaiot.net.library.phone.bean.AppQueryAccountEntity;
 import com.comaiot.net.library.phone.bean.AppQueryAidBindEntity;
 import com.comaiot.net.library.phone.bean.AppQuerySharedDeviceEntity;
 import com.comaiot.net.library.phone.bean.AppReceiveShareEntity;
@@ -133,4 +134,7 @@ public interface ComaiotService {
 
     @POST("api/v2/AccUpdateReq")
     Observable<BaseAppEntity> AccUpdateReq(@Body RequestBody body);
+	
+	@POST("api/v2/AppQueryAccountReq")
+    Observable<AppQueryAccountEntity> AppQueryAccountReq(@Body RequestBody body);
 }

@@ -23,7 +23,7 @@ public class Logger {
 
     private static String logPath = null;//log日志存放路径
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);//日期格式;
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);//日期格式;
 
     private static Date date = new Date();//因为log日志是使用日期命名的，使用静态成员变量主要是为了在整个程序运行期间只存在一个.log文件中;
     private static ComaiotController<ComaiotView> controller;
@@ -90,7 +90,7 @@ public class Logger {
 
         String fileName = logPath + "/log_Comaiot_device.log";//log日志名，使用时间命名，保证不重复
 
-        String log = dateFormat.format(date) + " " + type + " " + tag + " " + msg + "\n";//log日志内容，可以自行定制
+        String log = dateFormat.format(System.currentTimeMillis()) + " " + type + " " + tag + " " + msg + "\n";//log日志内容，可以自行定制
 
         //如果父路径不存在
         File file = new File(logPath);

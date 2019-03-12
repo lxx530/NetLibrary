@@ -1,249 +1,115 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package com.comaiot.net.library.device.bean;
 
 import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
 public class FaceverifyEntity extends BaseEntity implements Serializable {
+
     private int error_code;
     private String error_msg;
     private long log_id;
     private long timestamp;
     private int cached;
-    private FaceverifyEntity.Result result;
+    private Result result;
 
-    public FaceverifyEntity() {
+    public int getError_code() {
+        return error_code;
     }
 
-    public int a() {
-        return this.error_code;
+    public void setError_code(int error_code) {
+        this.error_code = error_code;
     }
 
-    public void a(int var1) {
-        this.error_code = var1;
+    public String getError_msg() {
+        return error_msg;
     }
 
-    public String b() {
-        return this.error_msg;
+    public void setError_msg(String error_msg) {
+        this.error_msg = error_msg;
     }
 
-    public void a(String var1) {
-        this.error_msg = var1;
+    public long getLog_id() {
+        return log_id;
     }
 
-    public long c() {
-        return this.log_id;
+    public void setLog_id(long log_id) {
+        this.log_id = log_id;
     }
 
-    public void a(long var1) {
-        this.log_id = var1;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public long d() {
-        return this.timestamp;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public void b(long var1) {
-        this.timestamp = var1;
+    public int getCached() {
+        return cached;
     }
 
-    public int e() {
-        return this.cached;
+    public void setCached(int cached) {
+        this.cached = cached;
     }
 
-    public void c(int var1) {
-        this.cached = var1;
+    public Result getResult() {
+        return result;
     }
 
-    public FaceverifyEntity.Result f() {
-        return this.result;
+    public void setResult(Result result) {
+        this.result = result;
     }
 
-    public void a(FaceverifyEntity.Result var1) {
-        this.result = var1;
-    }
-
+    @Override
     public String toString() {
-        return "FaceverifyEntity{error_code=" + this.error_code + ", error_msg='" + this.error_msg + '\'' + ", log_id=" + this.log_id + ", timestamp=" + this.timestamp + ", cached=" + this.cached + ", result=" + this.result + '}';
+        return "FaceverifyEntity{" +
+                "error_code=" + error_code +
+                ", error_msg='" + error_msg + '\'' +
+                ", log_id=" + log_id +
+                ", timestamp=" + timestamp +
+                ", cached=" + cached +
+                ", result=" + result +
+                '}';
     }
 
-    public class Liveness implements Serializable {
-        private float faceliveness;
-        private float livemapscore;
+    public class Result implements Serializable {
+        private Thresholds thresholds;
+        private float face_liveness;
+        private Face_list[] face_list;
 
-        public Liveness() {
+        public Thresholds getThresholds() {
+            return thresholds;
         }
 
-        public float a() {
-            return this.faceliveness;
+        public void setThresholds(Thresholds thresholds) {
+            this.thresholds = thresholds;
         }
 
-        public void a(float var1) {
-            this.faceliveness = var1;
+        public float getFace_liveness() {
+            return face_liveness;
         }
 
-        public float b() {
-            return this.livemapscore;
+        public void setFace_liveness(float face_liveness) {
+            this.face_liveness = face_liveness;
         }
 
-        public void b(float var1) {
-            this.livemapscore = var1;
+        public Face_list[] getFace_list() {
+            return face_list;
         }
 
+        public void setFace_list(Face_list[] face_list) {
+            this.face_list = face_list;
+        }
+
+        @Override
         public String toString() {
-            return "Liveness{faceliveness=" + this.faceliveness + ", livemapscore=" + this.livemapscore + '}';
-        }
-    }
-
-    public class Angle implements Serializable {
-        private double yaw;
-        private double pitch;
-        private double roll;
-
-        public Angle() {
-        }
-
-        public double a() {
-            return this.yaw;
-        }
-
-        public void a(double var1) {
-            this.yaw = var1;
-        }
-
-        public double b() {
-            return this.pitch;
-        }
-
-        public void b(double var1) {
-            this.pitch = var1;
-        }
-
-        public double c() {
-            return this.roll;
-        }
-
-        public void c(double var1) {
-            this.roll = var1;
-        }
-
-        public String toString() {
-            return "Angle{yaw=" + this.yaw + ", pitch=" + this.pitch + ", roll=" + this.roll + '}';
-        }
-    }
-
-    public class Location implements Serializable {
-        private double left;
-        private double top;
-        private double width;
-        private double height;
-        private long rotation;
-
-        public Location() {
-        }
-
-        public double a() {
-            return this.left;
-        }
-
-        public void a(double var1) {
-            this.left = var1;
-        }
-
-        public double b() {
-            return this.top;
-        }
-
-        public void b(double var1) {
-            this.top = var1;
-        }
-
-        public double c() {
-            return this.width;
-        }
-
-        public void c(double var1) {
-            this.width = var1;
-        }
-
-        public double d() {
-            return this.height;
-        }
-
-        public void d(double var1) {
-            this.height = var1;
-        }
-
-        public long e() {
-            return this.rotation;
-        }
-
-        public void a(long var1) {
-            this.rotation = var1;
-        }
-
-        public String toString() {
-            return "Location{left=" + this.left + ", top=" + this.top + ", width=" + this.width + ", height=" + this.height + ", rotation=" + this.rotation + '}';
-        }
-    }
-
-    public class Face_list implements Serializable {
-        private String face_token;
-        private FaceverifyEntity.Location location;
-        private double face_probability;
-        private FaceverifyEntity.Angle angle;
-        private FaceverifyEntity.Liveness liveness;
-
-        public Face_list() {
-        }
-
-        public String a() {
-            return this.face_token;
-        }
-
-        public void a(String var1) {
-            this.face_token = var1;
-        }
-
-        public FaceverifyEntity.Location b() {
-            return this.location;
-        }
-
-        public void a(FaceverifyEntity.Location var1) {
-            this.location = var1;
-        }
-
-        public double c() {
-            return this.face_probability;
-        }
-
-        public void a(double var1) {
-            this.face_probability = var1;
-        }
-
-        public FaceverifyEntity.Angle d() {
-            return this.angle;
-        }
-
-        public void a(FaceverifyEntity.Angle var1) {
-            this.angle = var1;
-        }
-
-        public FaceverifyEntity.Liveness e() {
-            return this.liveness;
-        }
-
-        public void a(FaceverifyEntity.Liveness var1) {
-            this.liveness = var1;
-        }
-
-        public String toString() {
-            return "Face_list{face_token='" + this.face_token + '\'' + ", location=" + this.location + ", face_probability=" + this.face_probability + ", angle=" + this.angle + ", liveness=" + this.liveness + '}';
+            return "Result{" +
+                    "thresholds=" + thresholds +
+                    ", face_liveness=" + face_liveness +
+                    ", face_list=" + Arrays.toString(face_list) +
+                    '}';
         }
     }
 
@@ -255,72 +121,223 @@ public class FaceverifyEntity extends BaseEntity implements Serializable {
         @SerializedName("frr_1e-2")
         private float frr_1e_2;
 
-        public Thresholds() {
+        public float getFrr_1e_4() {
+            return frr_1e_4;
         }
 
-        public float a() {
-            return this.frr_1e_4;
+        public void setFrr_1e_4(float frr_1e_4) {
+            this.frr_1e_4 = frr_1e_4;
         }
 
-        public void a(float var1) {
-            this.frr_1e_4 = var1;
+        public float getFrr_1e_3() {
+            return frr_1e_3;
         }
 
-        public float b() {
-            return this.frr_1e_3;
+        public void setFrr_1e_3(float frr_1e_3) {
+            this.frr_1e_3 = frr_1e_3;
         }
 
-        public void b(float var1) {
-            this.frr_1e_3 = var1;
+        public float getFrr_1e_2() {
+            return frr_1e_2;
         }
 
-        public float c() {
-            return this.frr_1e_2;
+        public void setFrr_1e_2(float frr_1e_2) {
+            this.frr_1e_2 = frr_1e_2;
         }
 
-        public void c(float var1) {
-            this.frr_1e_2 = var1;
-        }
-
+        @Override
         public String toString() {
-            return "Thresholds{frr_1e_4=" + this.frr_1e_4 + ", frr_1e_3=" + this.frr_1e_3 + ", frr_1e_2=" + this.frr_1e_2 + '}';
+            return "Thresholds{" +
+                    "frr_1e_4=" + frr_1e_4 +
+                    ", frr_1e_3=" + frr_1e_3 +
+                    ", frr_1e_2=" + frr_1e_2 +
+                    '}';
         }
     }
 
-    public class Result implements Serializable {
-        private FaceverifyEntity.Thresholds thresholds;
-        private float face_liveness;
-        private FaceverifyEntity.Face_list[] face_list;
+    public class Face_list implements Serializable {
+        private String face_token;                              //人脸图片的唯一标识
+        private Location location;                              //人脸在图片中的位置
+        private double face_probability;                        //人脸置信度，范围【0~1】，代表这是一张人脸的概率，0最小、1最大。
+        private Angle angle;                                    //人脸旋转角度参数
+        private Liveness liveness;                          //脸型，当face_field包含faceshape时返回
 
-        public Result() {
+        public String getFace_token() {
+            return face_token;
         }
 
-        public FaceverifyEntity.Thresholds a() {
-            return this.thresholds;
+        public void setFace_token(String face_token) {
+            this.face_token = face_token;
         }
 
-        public void a(FaceverifyEntity.Thresholds var1) {
-            this.thresholds = var1;
+        public Location getLocation() {
+            return location;
         }
 
-        public float b() {
-            return this.face_liveness;
+        public void setLocation(Location location) {
+            this.location = location;
         }
 
-        public void a(float var1) {
-            this.face_liveness = var1;
+        public double getFace_probability() {
+            return face_probability;
         }
 
-        public FaceverifyEntity.Face_list[] c() {
-            return this.face_list;
+        public void setFace_probability(double face_probability) {
+            this.face_probability = face_probability;
         }
 
-        public void a(FaceverifyEntity.Face_list[] var1) {
-            this.face_list = var1;
+        public Angle getAngle() {
+            return angle;
         }
 
+        public void setAngle(Angle angle) {
+            this.angle = angle;
+        }
+
+        public Liveness getLiveness() {
+            return liveness;
+        }
+
+        public void setLiveness(Liveness liveness) {
+            this.liveness = liveness;
+        }
+
+        @Override
         public String toString() {
-            return "Result{thresholds=" + this.thresholds + ", face_liveness=" + this.face_liveness + ", face_list=" + Arrays.toString(this.face_list) + '}';
+            return "Face_list{" +
+                    "face_token='" + face_token + '\'' +
+                    ", location=" + location +
+                    ", face_probability=" + face_probability +
+                    ", angle=" + angle +
+                    ", liveness=" + liveness +
+                    '}';
+        }
+    }
+
+    public class Location implements Serializable {
+        private double left;                               //人脸区域离左边界的距离
+        private double top;                                //人脸区域离上边界的距离
+        private double width;                              //人脸区域的宽度
+        private double height;                             //人脸区域的高度
+        private long rotation;                           //人脸框相对于竖直方向的顺时针旋转角，[-180,180]
+
+        public double getLeft() {
+            return left;
+        }
+
+        public void setLeft(double left) {
+            this.left = left;
+        }
+
+        public double getTop() {
+            return top;
+        }
+
+        public void setTop(double top) {
+            this.top = top;
+        }
+
+        public double getWidth() {
+            return width;
+        }
+
+        public void setWidth(double width) {
+            this.width = width;
+        }
+
+        public double getHeight() {
+            return height;
+        }
+
+        public void setHeight(double height) {
+            this.height = height;
+        }
+
+        public long getRotation() {
+            return rotation;
+        }
+
+        public void setRotation(long rotation) {
+            this.rotation = rotation;
+        }
+
+        @Override
+        public String toString() {
+            return "Location{" +
+                    "left=" + left +
+                    ", top=" + top +
+                    ", width=" + width +
+                    ", height=" + height +
+                    ", rotation=" + rotation +
+                    '}';
+        }
+    }
+
+    public class Angle implements Serializable {
+        private double yaw;                             //三维旋转之左右旋转角[-90(左), 90(右)]
+        private double pitch;                           //三维旋转之俯仰角度[-90(上), 90(下)]
+        private double roll;                            //平面内旋转角[-180(逆时针), 180(顺时针)]
+
+        public double getYaw() {
+            return yaw;
+        }
+
+        public void setYaw(double yaw) {
+            this.yaw = yaw;
+        }
+
+        public double getPitch() {
+            return pitch;
+        }
+
+        public void setPitch(double pitch) {
+            this.pitch = pitch;
+        }
+
+        public double getRoll() {
+            return roll;
+        }
+
+        public void setRoll(double roll) {
+            this.roll = roll;
+        }
+
+        @Override
+        public String toString() {
+            return "Angle{" +
+                    "yaw=" + yaw +
+                    ", pitch=" + pitch +
+                    ", roll=" + roll +
+                    '}';
+        }
+    }
+
+    public class Liveness implements Serializable {
+        private float faceliveness;
+        private float livemapscore;
+
+        public float getFaceliveness() {
+            return faceliveness;
+        }
+
+        public void setFaceliveness(float faceliveness) {
+            this.faceliveness = faceliveness;
+        }
+
+        public float getLivemapscore() {
+            return livemapscore;
+        }
+
+        public void setLivemapscore(float livemapscore) {
+            this.livemapscore = livemapscore;
+        }
+
+        @Override
+        public String toString() {
+            return "Liveness{" +
+                    "faceliveness=" + faceliveness +
+                    ", livemapscore=" + livemapscore +
+                    '}';
         }
     }
 }

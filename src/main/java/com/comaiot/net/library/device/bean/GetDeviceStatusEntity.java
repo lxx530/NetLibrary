@@ -1,5 +1,6 @@
 package com.comaiot.net.library.device.bean;
 
+import com.comaiot.net.library.phone.okhttp.Logger;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -164,9 +165,26 @@ public class GetDeviceStatusEntity implements Serializable{
         private int out_door_alarm;
         private int out_door_sound;
         private int out_door_ring;
+        private String out_door_duration;
 
         public int getSwitch_check() {
             return switch_check;
+        }
+
+        public void setRing_light_switch(int ring_light) {
+            this.ring_light = ring_light;
+        }
+
+        public int getRing_light_switch() {
+            return ring_light;
+        }
+
+        public void setOutside_alarm_switch(int outside_alarm) {
+            this.out_door_alarm = outside_alarm;
+        }
+
+        public int geOutside_alarm_switch() {
+            return out_door_alarm;
         }
 
         public void setSwitch_check(int switch_check) {
@@ -179,22 +197,6 @@ public class GetDeviceStatusEntity implements Serializable{
 
         public void setAuto_pic(int auto_pic) {
             this.auto_pic = auto_pic;
-        }
-
-        public int getRing_light() {
-            return ring_light;
-        }
-
-        public void setRing_light(int ring_light) {
-            this.ring_light = ring_light;
-        }
-
-        public int getNotification_duration() {
-            return notification_duration;
-        }
-
-        public void setNotification_duration(int notification_duration) {
-            this.notification_duration = notification_duration;
         }
 
         public int getSensitive() {
@@ -221,6 +223,16 @@ public class GetDeviceStatusEntity implements Serializable{
             this.tack_pic_num = tack_pic_num;
         }
 
+        public int get_alarm_interval_num() {
+            Logger.ee("GetDeviceStatusEntity Person_Check notification_duration:" + notification_duration);
+            return notification_duration;
+        }
+
+        public void setAlarm_interval_num(int alarm_interval_num) {
+            Logger.ee("GetDeviceStatusEntity Person_Check alarm_interval_num:" + alarm_interval_num);
+            this.notification_duration = alarm_interval_num;
+        }
+
         public int getOut_door_alarm() {
             return out_door_alarm;
         }
@@ -245,19 +257,29 @@ public class GetDeviceStatusEntity implements Serializable{
             this.out_door_ring = out_door_ring;
         }
 
+        public String getOut_door_duration() {
+            return out_door_duration;
+        }
+
+        public void setOut_door_duration(String out_door_duration) {
+            this.out_door_duration = out_door_duration;
+        }
+
         @Override
         public String toString() {
             return "Person_Check{" +
                     "switch_check=" + switch_check +
-                    ", auto_pic=" + auto_pic +
-                    ", ring_light=" + ring_light +
-                    ", notification_duration=" + notification_duration +
+                    ", auto_pic='" + auto_pic + '\'' +
                     ", sensitive=" + sensitive +
                     ", alarm_mode=" + alarm_mode +
                     ", tack_pic_num=" + tack_pic_num +
                     ", out_door_alarm=" + out_door_alarm +
                     ", out_door_sound=" + out_door_sound +
                     ", out_door_ring=" + out_door_ring +
+                    ", out_door_duration='" + out_door_duration + '\'' +
+                    ", alarm_interval_num='" + notification_duration + '\'' +
+                    ", ring_light='" + ring_light + '\'' +
+                    ", outside_alarm='" + out_door_alarm + '\'' +
                     '}';
         }
     }

@@ -3,6 +3,8 @@ package com.comaiot.net.library.phone.okhttp;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+
 import com.comaiot.net.library.device.json_bean.BaseJsonParams;
 import com.comaiot.net.library.device.utils.GsonUtils;
 import com.comaiot.net.library.device.utils.RetrofitUtil;
@@ -70,7 +72,6 @@ public class OkHttpUtils {
      */
     public void post(BaseJsonParams postParams, String requestUrl, final OkHttpCallback callBack) {
         requestUrl = RetrofitUtil.getBaseUrl() + requestUrl;
-        Logger.ii("post ---------------------- baseUrl = " + RetrofitUtil.getBaseUrl());
         try {
             String params = null;
             if (postParams instanceof AppQueryDeviceListParams) {
@@ -152,6 +153,45 @@ public class OkHttpUtils {
             Logger.ii("post Exception =  " + e.toString());
         }
     }
+
+    /**
+     * okHttp post异步请求
+     *
+     * @param callBack 请求返回数据回调
+     * @return
+     */
+    public void post(String requestUrl, final OkHttpCallback callBack) {
+        try {
+            Logger.ii("post requestUrl = " + requestUrl);
+            RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, "");
+            final Request request = addHeaders().url(requestUrl).post(body).build();
+            final Call call = mOkHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    onFailedCallBack(e, callBack);
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        try {
+                            String responseStr = response.body().string();
+                            Logger.ii("post onResponse =  " + responseStr);
+                            JSONObject oriData = new JSONObject(responseStr.trim());
+
+                            onSuccessCallBack(oriData, callBack);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Logger.ii("post Exception =  " + e.toString());
+        }
+    }
+
 
     /**
      * okHttp get异步请求

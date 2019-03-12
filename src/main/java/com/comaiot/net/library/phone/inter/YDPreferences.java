@@ -35,6 +35,10 @@ public class YDPreferences {
     private static final String APP_TOKEN = "yd_phone_app_token";
     private static final String BIND_AID = "yd_phone_app_bind_aid";
     private static final String SHARE_AID = "yd_phone_app_share_aid";
+    private static final String DEVICE_HOST = "device_host";
+    private static final String DEVICE_PORT = "device_port";
+    private static final String DEVICE_USER = "device_user";
+    private static final String DEVICE_PASS = "device_pass";
 
     public String getAppUid() {
         String string = mSp.getString(APP_UID, null);
@@ -82,6 +86,50 @@ public class YDPreferences {
 
     public String getBindAppAid() {
         String string = mSp.getString(BIND_AID, null);
+        return DESUtils.decryptString(string);
+    }
+
+    public boolean saveMqttHost(String host) {
+        host = DESUtils.encryptString(host);
+        SharedPreferences.Editor editor = mSp.edit();
+        return editor.putString(DEVICE_HOST, host).commit();
+    }
+
+    public String getHost() {
+        String string = mSp.getString(DEVICE_HOST, null);
+        return DESUtils.decryptString(string);
+    }
+
+    public boolean saveMqttPort(String port) {
+        port = DESUtils.encryptString(port);
+        SharedPreferences.Editor editor = mSp.edit();
+        return editor.putString(DEVICE_PORT, port).commit();
+    }
+
+    public String getPort() {
+        String string = mSp.getString(DEVICE_PORT, null);
+        return DESUtils.decryptString(string);
+    }
+
+    public boolean saveMqttUser(String user) {
+        user = DESUtils.encryptString(user);
+        SharedPreferences.Editor editor = mSp.edit();
+        return editor.putString(DEVICE_USER, user).commit();
+    }
+
+    public String getUser() {
+        String string = mSp.getString(DEVICE_USER, null);
+        return DESUtils.decryptString(string);
+    }
+
+    public boolean saveMqttPass(String pass) {
+        pass = DESUtils.encryptString(pass);
+        SharedPreferences.Editor editor = mSp.edit();
+        return editor.putString(DEVICE_PASS, pass).commit();
+    }
+
+    public String getPass() {
+        String string = mSp.getString(DEVICE_PASS, null);
         return DESUtils.decryptString(string);
     }
 }

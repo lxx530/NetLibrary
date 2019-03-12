@@ -15,7 +15,9 @@ public class AppShareDeviceEntity extends BaseAppEntity {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "AppShareDeviceEntity{" +
+                "content=" + content +
+                '}';
     }
 
     public static class Content implements Serializable{
@@ -44,6 +46,14 @@ public class AppShareDeviceEntity extends BaseAppEntity {
 
         public void setShare_num(String share_num) {
             this.share_num = share_num;
+        }
+
+        @Override
+        public String toString() {
+            return "Content{" +
+                    "share_token='" + share_token + '\'' +
+                    ", share_num='" + share_num + '\'' +
+                    '}';
         }
     }
 }

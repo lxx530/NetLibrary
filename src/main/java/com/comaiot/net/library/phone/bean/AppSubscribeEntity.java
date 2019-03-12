@@ -13,6 +13,13 @@ public class AppSubscribeEntity extends BaseAppEntity {
         this.content = content;
     }
 
+    @Override
+    public String toString() {
+        return "AppSubscribeEntity{" +
+                "content=" + content +
+                '}';
+    }
+
     public static class Content implements Serializable{
         private String app_uid;
         private String app_envid;
@@ -106,6 +113,16 @@ public class AppSubscribeEntity extends BaseAppEntity {
 
         public void setPass(String pass) {
             this.pass = pass;
+        }
+
+        @Override
+        public String toString() {
+            return "Mqtt{" +
+                    "ip='" + ip + '\'' +
+                    ", port='" + port + '\'' +
+                    ", user='" + user + '\'' +
+                    ", pass='" + pass + '\'' +
+                    '}';
         }
     }
 }

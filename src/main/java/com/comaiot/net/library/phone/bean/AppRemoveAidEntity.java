@@ -16,7 +16,9 @@ public class AppRemoveAidEntity extends BaseAppEntity {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "AppRemoveAidEntity{" +
+                "content=" + Arrays.toString(content) +
+                '}';
     }
 
     public static class Content implements Serializable{

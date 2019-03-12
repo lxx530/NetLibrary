@@ -15,6 +15,8 @@ import com.comaiot.net.library.device.bean.DevScanBarcodeEntity;
 import com.comaiot.net.library.device.bean.FaceverifyEntity;
 import com.comaiot.net.library.device.bean.PushEvent;
 import com.comaiot.net.library.device.bean.WeatherEntity;
+import com.comaiot.net.library.device.bean.YDBase;
+import com.comaiot.net.library.device.bean.YDShareUser;
 import com.comaiot.net.library.device.callback.CallBack;
 import com.comaiot.net.library.device.utils.AppUtils;
 import com.comaiot.net.library.device.view.AgoraLicensesView;
@@ -38,6 +40,7 @@ import com.comaiot.net.library.phone.bean.AppBindWeixinEntity;
 import com.comaiot.net.library.phone.bean.AppChangeAccountInfoEntity;
 import com.comaiot.net.library.phone.bean.AppChangePasswordEntity;
 import com.comaiot.net.library.phone.bean.AppChangePhoneEntity;
+import com.comaiot.net.library.phone.bean.AppQueryAccountEntity;
 import com.comaiot.net.library.phone.bean.AppQueryAidBindEntity;
 import com.comaiot.net.library.phone.bean.AppReceiveShareEntity;
 import com.comaiot.net.library.phone.bean.AppReceiveShareNumEntity;
@@ -63,6 +66,7 @@ import com.comaiot.net.library.phone.view.AppBindWeixinReqView;
 import com.comaiot.net.library.phone.view.AppChangeAccountInfoReqView;
 import com.comaiot.net.library.phone.view.AppChangePasswordReqView;
 import com.comaiot.net.library.phone.view.AppChangePhoneReqView;
+import com.comaiot.net.library.phone.view.AppQueryAccountReqView;
 import com.comaiot.net.library.phone.view.AppQueryAidBindRquView;
 import com.comaiot.net.library.phone.view.AppReceiveShareReqView;
 import com.comaiot.net.library.phone.view.AppRemoveAidReqView;
@@ -73,9 +77,14 @@ import com.comaiot.net.library.phone.view.AppSubscribeReqView;
 import com.comaiot.net.library.phone.view.AppUnSubscribeReqView;
 import com.comaiot.net.library.phone.view.AppWeChatSubscribeReqView;
 import com.comaiot.net.library.phone.view.BindPhoneView;
+import com.comaiot.net.library.phone.view.DeleteComaiotDeviceView;
+import com.comaiot.net.library.phone.view.DeleteShareComaiotView;
+import com.comaiot.net.library.phone.view.GetComaiotShareUserView;
 import com.comaiot.net.library.phone.view.GetSmsView;
 import com.comaiot.net.library.phone.view.GetStorageView;
 import com.comaiot.net.library.phone.view.RegView;
+import com.comaiot.net.library.phone.view.ShareComaiotDeviceView;
+import com.comaiot.net.library.phone.view.UpdateComaiotNameView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Logger;
@@ -336,7 +345,7 @@ public class ComaiotController<V extends ComaiotView> {
         if (!isViewAttached()) {
             return;
         }
-        ComaiotModel.agoraLicenses(custom,credential, new CallBack<ArogaBean.Licenses>() {
+        ComaiotModel.agoraLicenses(custom, credential, new CallBack<ArogaBean.Licenses>() {
             @Override
             public void onStart() {
 
@@ -365,7 +374,7 @@ public class ComaiotController<V extends ComaiotView> {
 
     public void getStorageToken(String device_id, String device_token, String file_name, String msg_type, String file_type, String from_where, String filePath, int msgType, long createMsgTime) {
         if (!isViewAttached()) {
-            Log.e("Comaiot_Device","getStorageToken but view is not BaseComaiotView and return");
+            Log.e("Comaiot_Device", "getStorageToken but view is not BaseComaiotView and return");
             return;
         }
         ComaiotModel.getStorageToken(device_id, device_token, file_name, new CallBack<StorageEntity>() {
@@ -514,6 +523,37 @@ public class ComaiotController<V extends ComaiotView> {
             public void onSuccess(RegEntity data) {
                 if (isViewAttached())
                     ((RegView) iMvpView).onRegSuccess(data);
+            }
+        });
+    }
+
+    public void AppQueryAccountReq(String appUid, String appEnvid, String phoneNumber, String subscribe_type) {
+        if (!isViewAttached()) {
+            return;
+        }
+        ComaiotModel.AppQueryAccountReq(appUid, appEnvid, phoneNumber, subscribe_type, new CallBack<AppQueryAccountEntity>() {
+            @Override
+            public void onStart() {
+                if (isViewAttached())
+                    iMvpView.showLoading();
+            }
+
+            @Override
+            public void onComplete() {
+                if (isViewAttached())
+                    iMvpView.hideLoading();
+            }
+
+            @Override
+            public void onError(String errcode) {
+                if (isViewAttached())
+                    iMvpView.onRequestError(errcode, "AppQueryAccountReq");
+            }
+
+            @Override
+            public void onSuccess(AppQueryAccountEntity data) {
+                if (isViewAttached())
+                    ((AppQueryAccountReqView) iMvpView).onAppQueryAccountReqSuccess(data);
             }
         });
     }
@@ -1776,6 +1816,161 @@ public class ComaiotController<V extends ComaiotView> {
             public void onSuccess(AppAidEntity data) {
                 if (isViewAttached())
                     reqView.onAppAidReqSuccess(data);
+            }
+        });
+    }
+
+    public void updateDeviceName(String token, String sn, String reName, UpdateComaiotNameView reqView) {
+        if (!isViewAttached()) {
+            return;
+        }
+        ComaiotModel.updateDeviceName(token, sn, reName, new CallBack<YDBase>() {
+            @Override
+            public void onStart() {
+                if (isViewAttached())
+                    reqView.showLoading();
+            }
+
+            @Override
+            public void onComplete() {
+                if (isViewAttached())
+                    reqView.hideLoading();
+            }
+
+            @Override
+            public void onError(String msg) {
+                if (isViewAttached())
+                    reqView.onRequestError(msg, "updateDeviceName");
+            }
+
+            @Override
+            public void onSuccess(YDBase data) {
+                if (isViewAttached())
+                    reqView.onUpdateNameSucc(data);
+            }
+        });
+    }
+
+    public void getComaiotShareUser(String jwt, String sn, GetComaiotShareUserView reqView) {
+        if (!isViewAttached()) {
+            return;
+        }
+        ComaiotModel.getComaiotShareUser(jwt, sn, new CallBack<YDBase<YDShareUser[]>>() {
+            @Override
+            public void onStart() {
+                if (isViewAttached())
+                    reqView.showLoading();
+            }
+
+            @Override
+            public void onComplete() {
+                if (isViewAttached())
+                    reqView.hideLoading();
+            }
+
+            @Override
+            public void onError(String msg) {
+                if (isViewAttached())
+                    reqView.onRequestError(msg, "getComaiotShareUser");
+            }
+
+            @Override
+            public void onSuccess(YDBase<YDShareUser[]> data) {
+                if (isViewAttached())
+                    reqView.onGetComaiotShareUserSucc(data);
+            }
+        });
+    }
+
+    public void shareComaiotDevice(String token, String sn, String phoneNumber, ShareComaiotDeviceView reqView) {
+        if (!isViewAttached()) {
+            return;
+        }
+        ComaiotModel.shareComaiotDevice(token, sn, phoneNumber, new CallBack<YDBase>() {
+            @Override
+            public void onStart() {
+                if (isViewAttached())
+                    reqView.showLoading();
+            }
+
+            @Override
+            public void onComplete() {
+                if (isViewAttached())
+                    reqView.hideLoading();
+            }
+
+            @Override
+            public void onError(String msg) {
+                if (isViewAttached())
+                    reqView.onRequestError(msg, "shareComaiotDevice");
+            }
+
+            @Override
+            public void onSuccess(YDBase data) {
+                if (isViewAttached())
+                    reqView.onShareDeviceSucc(data);
+            }
+        });
+    }
+
+    public void deleteComaiotShare(String jwt, String sn, String phoneNumber, DeleteShareComaiotView reqView) {
+        if (!isViewAttached()) {
+            return;
+        }
+        ComaiotModel.deleteComaiotShare(jwt, sn, phoneNumber, new CallBack<YDBase>() {
+            @Override
+            public void onStart() {
+                if (isViewAttached())
+                    reqView.showLoading();
+            }
+
+            @Override
+            public void onComplete() {
+                if (isViewAttached())
+                    reqView.hideLoading();
+            }
+
+            @Override
+            public void onError(String msg) {
+                if (isViewAttached())
+                    reqView.onRequestError(msg, "deleteComaiotShare");
+            }
+
+            @Override
+            public void onSuccess(YDBase data) {
+                if (isViewAttached())
+                    reqView.onDeleteShareSucc(data);
+            }
+        });
+    }
+
+    public void deleteComaiotDevice(String token, String sn, DeleteComaiotDeviceView reqView) {
+        if (!isViewAttached()) {
+            return;
+        }
+        ComaiotModel.deleteComaiotDevice(token, sn, new CallBack<YDBase>() {
+            @Override
+            public void onStart() {
+                if (isViewAttached())
+                    reqView.showLoading();
+            }
+
+            @Override
+            public void onComplete() {
+                if (isViewAttached())
+                    reqView.hideLoading();
+            }
+
+            @Override
+            public void onError(String msg) {
+                if (isViewAttached())
+                    reqView.onRequestError(msg, "deleteComaiotDevice");
+            }
+
+            @Override
+            public void onSuccess(YDBase data) {
+                if (isViewAttached())
+                    reqView.onDeleteDeviceSucc(data);
             }
         });
     }

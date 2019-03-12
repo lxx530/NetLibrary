@@ -60,6 +60,7 @@ public class AppDownloadFileEntity extends BaseAppEntity {
         private String file_type;
         private String from_where;
         private String from_id;
+        private String deviceNickName;
 
         public String getFileNumber() {
             return fileNumber;
@@ -91,6 +92,14 @@ public class AppDownloadFileEntity extends BaseAppEntity {
 
         public void setSrc_filename(String src_filename) {
             this.src_filename = src_filename;
+        }
+
+        public void setDeviceNickName(String deviceNickName) {
+            this.deviceNickName = deviceNickName;
+        }
+
+        public String getDeviceNickName() {
+            return deviceNickName;
         }
 
         public String getUrl() {

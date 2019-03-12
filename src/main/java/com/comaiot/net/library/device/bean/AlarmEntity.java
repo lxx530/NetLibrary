@@ -6,6 +6,7 @@ public class AlarmEntity extends CmdInfo {
     private String mode;
     private String url;
     private String from;
+    private String devUid;
 
     public int getUid() {
         return uid;
@@ -21,6 +22,9 @@ public class AlarmEntity extends CmdInfo {
     }
     public String getFrom() {
         return from;
+    }
+    public String getDevUid() {
+        return devUid;
     }
 
     public void setUid(int uid) {
@@ -38,6 +42,9 @@ public class AlarmEntity extends CmdInfo {
     public void setFrom(String from) {
         this.from = from;
     }
+    public void setDevUid(String devUid) {
+        this.devUid = devUid;
+    }
 
     @Override
     public String toString() {
@@ -47,6 +54,7 @@ public class AlarmEntity extends CmdInfo {
                 "mode=" + mode +
                 "url=" + url +
                 "from=" + from +
+                "devUid=" + devUid +
                 '}';
     }
 }

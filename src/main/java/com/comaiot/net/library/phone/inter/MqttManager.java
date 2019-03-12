@@ -26,6 +26,7 @@ public class MqttManager {
     private ConnectionHandlerCallBack mConnectCallBack;
 
     private boolean mIsConnecting = false;
+    private boolean isConnectComlete = false;
 
     private MqttManager(Context context) {
         this.mContext = context;
@@ -166,6 +167,7 @@ public class MqttManager {
 
         public void connectionLost(Throwable cause) {
             mIsConnecting = false;
+            isConnectComlete = false;
             if (null != mConnectCallBack) mConnectCallBack.disconnect();
             int random = new Random().nextInt(1000);
             new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -212,7 +214,9 @@ public class MqttManager {
         @Override
         public void connectComplete(boolean reconnect, String serverURI) {
             mIsConnecting = false;
-            callBack.connectComplete(reconnect, serverURI);
+            isConnectComlete = true;
+            if (null != callBack)
+                callBack.connectComplete(reconnect, serverURI);
             if (null != mConnectCallBack)
                 mConnectCallBack.connectComplete(reconnect, serverURI);
             count = 0;
@@ -247,6 +251,7 @@ public class MqttManager {
      * 断开链接
      */
     public void disconnect() {
+        isConnectComlete = false;
         if (mClient != null && mClient.isConnected()) {
             try {
                 mClient.disconnect();
@@ -270,6 +275,10 @@ public class MqttManager {
         if (null != mOptions) {
             mOptions = null;
         }
+    }
+
+    public boolean isConnectCompete(){
+        return isConnectComlete;
     }
 
     /**

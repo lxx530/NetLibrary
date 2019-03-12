@@ -15,7 +15,9 @@ public class AppQueryAidBindEntity extends BaseAppEntity {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "AppQueryAidBindEntity{" +
+                "content=" + content +
+                '}';
     }
 
     public static class Content implements Serializable {
@@ -44,6 +46,14 @@ public class AppQueryAidBindEntity extends BaseAppEntity {
 
         public void setStatus(String status) {
             this.status = status;
+        }
+
+        @Override
+        public String toString() {
+            return "Content{" +
+                    "status='" + status + '\'' +
+                    ", dev_uid='" + dev_uid + '\'' +
+                    '}';
         }
     }
 

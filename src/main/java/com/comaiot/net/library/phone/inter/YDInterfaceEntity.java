@@ -35,6 +35,8 @@ import com.comaiot.net.library.phone.view.AppUnSubscribeReqView;
 import com.comaiot.net.library.phone.view.OnCatMessageArriveListener;
 import com.comaiot.net.library.phone.view.SocketConnectionListener;
 
+import org.eclipse.paho.client.mqttv3.logging.LoggerFactory;
+
 import java.util.List;
 
 import static com.comaiot.net.library.phone.inter.MqttUtils.CONTROL_DEVICE;
@@ -52,11 +54,11 @@ import static com.comaiot.net.library.phone.inter.MqttUtils.SET_DEVICE_SETTING;
 public class YDInterfaceEntity {
     private static YDInterfaceEntity mInstance;
     private static Context mContext;
-    private static MqttManager mMqttManager;
+
     private final ComaiotController<ComaiotView> mComaiotController;
 
     private SocketConnectionListener mSocketListener;
-    private OnCatMessageArriveListener mMqttListener;
+
     private List<DeviceEntity> mDevices;
 
     private YDInterfaceEntity() {
@@ -78,7 +80,6 @@ public class YDInterfaceEntity {
             }
         }
         YDPreferences.init(context);
-        mMqttManager = MqttManager.getInstance(mContext);
         RetrofitUtil.getInstance(mContext);
         return mInstance;
     }
@@ -400,109 +401,6 @@ public class YDInterfaceEntity {
             throw new RuntimeException("please check the account's login status");
         }
         mComaiotController.AppReceiveShareNumReq(appUid, appEnvid, token, "num", shareNumber, null, reqView);
-    }
-
-    /**
-     * 对消息通道进行监听 请在[login],[setCatDeviceMessageListener]方法之前调用
-     *
-     * @param listener    监听回调
-     * @param deviceDatas 设备列表
-     */
-    public void setSocketConnectionListener(SocketConnectionListener listener, List<DeviceEntity> deviceDatas) {
-        this.mSocketListener = listener;
-        this.mDevices = deviceDatas;
-        mMqttManager.setConnectionCallBack(new MqttManager.ConnectionHandlerCallBack() {
-            @Override
-            public void connectError(Exception e) {
-                mSocketListener.onSocketConnectError(e);
-            }
-
-            @Override
-            public void disconnect() {
-                mSocketListener.onSocketDisconnect();
-            }
-
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-                mSocketListener.onSocketConnectSuccess();
-                if (null != mDevices) {
-                    for (DeviceEntity entity : mDevices) {
-                        if (!mMqttManager.isConnected()) {
-                            throw new RuntimeException("please check the account's login status or check network");
-                        } else {
-                            mMqttManager.subscribeMsg(MqttUtils.getAppSubTopic(entity.getBindDeviceData().getDev_uid()), QOS);
-                            mMqttManager.subscribeMsg(MqttUtils.getAppSubAppTopic(entity.getBindDeviceData().getDev_uid(), MqttManager.getInstance(mContext).getClientId()), QOS);
-                            CmdInfo cmdInfo = new CmdInfo();
-                            cmdInfo.setCmd(QUERY_ONLINE);
-                            cmdInfo.setClientId(MqttManager.getInstance(mContext).getClientId());
-                            String toJson = GsonUtils.toJson(cmdInfo);
-                            mMqttManager.publish(MqttUtils.getAppPubAllTopic(entity.getBindDeviceData().getDev_uid()), toJson, false, QOS);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * 对猫眼设备进行消息监听 请在[login]方法之前调用
-     *
-     * @param listener 监听回调
-     */
-    public void setCatDeviceMessageListener(OnCatMessageArriveListener listener) {
-        this.mMqttListener = listener;
-        mMqttManager.setMessageHandlerCallBack(new MqttManager.MessageHandlerCallBack() {
-            @Override
-            public void messageSuccess(String topicName, String msg) {
-                if (null == mMqttListener)
-                    throw new RuntimeException("please call [setCatDeviceMessageListener] method , MessageListener is NULL");
-                CmdInfo cmdInfo = GsonUtils.fromJson(msg, CmdInfo.class);
-                String cmd = cmdInfo.getCmd();
-                if (cmd.equals(DEVICE_ONLINE)) {
-                    mMqttListener.onCatDeviceOnline(cmdInfo.getDevUid());
-                } else if (cmd.equals(DEVICE_STATUS_CHANGED)) {
-                    DeviceStatusChangeEntity entity = GsonUtils.fromJson(msg, DeviceStatusChangeEntity.class);
-                    mMqttListener.onCatDeviceStatusChanged(entity, cmdInfo.getDevUid());
-                } else if (cmd.equals(QUERY_ONLINE)) {
-                    mMqttListener.onCatDeviceOnline(cmdInfo.getDevUid());
-                } else if (cmd.equals(GET_DEVICE_STATUS)) {
-                    GetDeviceStatusEntity entity = GsonUtils.fromJson(msg, GetDeviceStatusEntity.class);
-                    mMqttListener.onGetCatDeviceStatusSuccess(entity, cmdInfo.getDevUid());
-                } else if (cmd.equals(DEVICE_RESET)) {
-                    mMqttListener.onCatDeviceResetPrepare(cmdInfo.getDevUid());
-                } else if (cmd.equals(SET_DEVICE_SETTING)) {
-                    SetDeviceSettingEntity entity = GsonUtils.fromJson(msg, SetDeviceSettingEntity.class);
-                    mMqttListener.onCatDeviceConfigComplete(entity, cmdInfo.getDevUid());
-                } else if (cmd.equals(DEVICE_ALARM)) {
-                    AlarmEntity uidEntity = GsonUtils.fromJson(msg, AlarmEntity.class);
-                    mMqttListener.onCatDeviceAlarmArrived(uidEntity, cmdInfo.getDevUid());
-                } else if (cmd.equals(CONTROL_DEVICE)) {
-                    AppControlDevice controlDevice = GsonUtils.fromJson(msg, AppControlDevice.class);
-                    mMqttListener.onCatDeviceControlComplete(controlDevice, cmdInfo.getDevUid());
-                } else if (cmd.equals(DEVICE_OFFLINE)) {
-                    mMqttListener.onCatDeviceOffline(cmdInfo.getDevUid());
-                }
-            }
-
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-                mSocketListener.onSocketConnectSuccess();
-            }
-        });
-    }
-
-    /**
-     * 查看猫眼远程视频 （网络实时视频）
-     *
-     * @param devId    猫眼设备ID
-     * @param callBack 消息发送成功
-     */
-    public void lookCatDeviceVideo(String devId, MqttManager.SendSocketMessageCallBack callBack) {
-        CmdInfo cmdInfo = new CmdInfo();
-        cmdInfo.setCmd(OPEN_VIDEO);
-        cmdInfo.setClientId(MqttManager.getInstance(mContext).getClientId());
-        String toJson = GsonUtils.toJson(cmdInfo);
-        mMqttManager.publish(MqttUtils.getAppPubAllTopic(devId), toJson, false, QOS, callBack);
     }
 
     /**

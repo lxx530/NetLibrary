@@ -29,20 +29,18 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.4.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
     implementation 'com.google.code.gson:gson:2.8.2'
-    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'io.reactivex:rxjava:1.3.8'
     implementation 'io.reactivex:rxandroid:1.2.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compileOnly "com.android.support:appcompat-v7:${support_android_version}"
 }
 
 ext {
     SDK_NAME = 'yd_lock_library'
-    SDK_VERSION = '_V1.0.1'
+    SDK_VERSION = '_V1.0.2'
 }
 
 task deleteBuild(type: Delete) {
@@ -55,15 +53,13 @@ task makeJar(type: Jar) {
     from(project.zipTree("custom/adapter-rxjava-2.4.0.jar"))
     from(project.zipTree("custom/converter-gson-2.4.0.jar"))
     from(project.zipTree("custom/eventbus-3.1.1.jar"))
-    from(project.zipTree("custom/glide-4.7.1.jar"))
     from(project.zipTree("custom/gson-2.8.2.jar"))
     from(project.zipTree("custom/okhttp-3.11.0.jar"))
     from(project.zipTree("custom/okio-1.14.0.jar"))
-    from(project.zipTree("custom/org.eclipse.paho.android.service-1.1.1.jar"))
-    from(project.zipTree("custom/org.eclipse.paho.client.mqttv3-1.2.0.jar"))
     from(project.zipTree("custom/retrofit-2.4.0.jar"))
     from(project.zipTree("custom/rxandroid-1.2.1.jar"))
     from(project.zipTree("custom/rxjava-1.3.8.jar"))
+    from('src/main/resources/')
     destinationDir = file('build/libs')
 
     exclude('com/comaiot/net/library/BuildConfig.class')
@@ -76,11 +72,11 @@ task makeJar(type: Jar) {
     include('retrofit2/**/*.class')
     include('retrofit2/adapter/rxjava/**/*.class')
     include('org/greenrobot/eventbus/**/*.class')
-    include('com/bumptech/glide/**/*.class')
     include('com/google/gson/**/*.class')
     include('okhttp3/**/*.class')
+    include('com/bumptech/glide/**/*.class')
     include('okio/**/*.class')
-    include('org/eclipse/paho/**/*.class')
+    include('src/main/resources/**/*.properties')
 }
 
 makeJar.dependsOn(deleteBuild, build)

@@ -36,22 +36,30 @@ public class AppQueryDeviceListEntity extends BaseAppEntity {
         public void setBindList(List<DeviceEntity> bindList) {
             this.bindList = bindList;
         }
+
+        @Override
+        public String toString() {
+            return "Content{" +
+                    "bindNum=" + bindNum +
+                    ", bindList=" + bindList +
+                    '}';
+        }
     }
 
     public static class BindDeviceData implements Serializable {
-        private String bindSn;
+        private String sn;
         private String app_uid;
         private String app_aid;
         private String app_envid;
         private String dev_uid;
         private String bind_date;
 
-        public String getBindSn() {
-            return bindSn;
+        public String getSn() {
+            return sn;
         }
 
-        public void setBindSn(String bindSn) {
-            this.bindSn = bindSn;
+        public void setSn(String sn) {
+            this.sn = sn;
         }
 
         /**

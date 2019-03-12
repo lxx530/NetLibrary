@@ -16,7 +16,9 @@ public class AppUnSubscribeEntity extends BaseAppEntity {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "AppUnSubscribeEntity{" +
+                "content=" + Arrays.toString(content) +
+                '}';
     }
 
     public static class Content implements Serializable{

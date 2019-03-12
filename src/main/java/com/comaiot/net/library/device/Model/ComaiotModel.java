@@ -1,5 +1,6 @@
 package com.comaiot.net.library.device.Model;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.comaiot.net.library.device.bean.ArogaBean;
@@ -10,6 +11,8 @@ import com.comaiot.net.library.device.bean.DevQueryTimeEntity;
 import com.comaiot.net.library.device.bean.DevScanBarcodeEntity;
 import com.comaiot.net.library.device.bean.FaceverifyEntity;
 import com.comaiot.net.library.device.bean.WeatherEntity;
+import com.comaiot.net.library.device.bean.YDBase;
+import com.comaiot.net.library.device.bean.YDShareUser;
 import com.comaiot.net.library.device.callback.CallBack;
 import com.comaiot.net.library.device.utils.RetrofitUtil;
 import com.comaiot.net.library.phone.bean.AppAidEntity;
@@ -18,6 +21,7 @@ import com.comaiot.net.library.phone.bean.AppBindWeixinEntity;
 import com.comaiot.net.library.phone.bean.AppChangeAccountInfoEntity;
 import com.comaiot.net.library.phone.bean.AppChangePasswordEntity;
 import com.comaiot.net.library.phone.bean.AppChangePhoneEntity;
+import com.comaiot.net.library.phone.bean.AppQueryAccountEntity;
 import com.comaiot.net.library.phone.bean.AppQueryAidBindEntity;
 import com.comaiot.net.library.phone.bean.AppQuerySharedDeviceEntity;
 import com.comaiot.net.library.phone.bean.AppReceiveShareEntity;
@@ -284,7 +288,7 @@ public class ComaiotModel {
         RetrofitUtil.getInstance().queryAgoraSocketUserNumber(mEntitySubscriber, channelName);
     }
 
-    public static void agoraLicenses(String custom, String credential,CallBack<ArogaBean.Licenses> callBack) {
+    public static void agoraLicenses(String custom, String credential, CallBack<ArogaBean.Licenses> callBack) {
         //query user number
         Subscriber<ArogaBean.Licenses> mEntitySubscriber = new Subscriber<ArogaBean.Licenses>() {
 
@@ -308,7 +312,7 @@ public class ComaiotModel {
 
             @Override
             public void onNext(ArogaBean.Licenses licensesArogaBean) {
-                if (null!= licensesArogaBean) {
+                if (null != licensesArogaBean) {
                     callBack.onSuccess(licensesArogaBean);
                 } else {
                     callBack.onError("null");
@@ -316,7 +320,7 @@ public class ComaiotModel {
                 }
             }
         };
-        RetrofitUtil.getInstance().agoraLicenses(mEntitySubscriber, custom,credential);
+        RetrofitUtil.getInstance().agoraLicenses(mEntitySubscriber, custom, credential);
     }
 
     public static void HeaderImageTokenReq(String appUid, String token, String file_name, CallBack<StorageEntity> callBack) {
@@ -632,6 +636,12 @@ public class ComaiotModel {
                     String port = baseEntity.getContent().getMqtt().getPort();
                     String user = baseEntity.getContent().getMqtt().getUser();
                     String pwd = baseEntity.getContent().getMqtt().getPass();
+
+                    YDPreferences.get().saveMqttHost(host);
+                    YDPreferences.get().saveMqttPort(port);
+                    YDPreferences.get().saveMqttUser(user);
+                    YDPreferences.get().saveMqttPass(pwd);
+
                     MqttManager.get().connect(host, clientId, port, user, pwd);
                     callBack.onSuccess(baseEntity);
                 }
@@ -1500,5 +1510,204 @@ public class ComaiotModel {
             }
         };
         RetrofitUtil.getInstance().AccUpdateReq(mEntitySubscriber, appUid, appEnvid, token, devUid, accId, ydLockSn, ydLockNickName, ydLockMacAddress, YDLockBtAddress, ydLockDefaultName, ydLockFirmVersion, ydLockHwVersion, config);
+    }
+
+    public static void getComaiotShareUser(String jwt, String sn, CallBack<YDBase<YDShareUser[]>> callBack) {
+        Subscriber<YDBase<YDShareUser[]>> mEntitySubscriber = new Subscriber<YDBase<YDShareUser[]>>() {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                callBack.onStart();
+            }
+
+            @Override
+            public void onCompleted() {
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onNext(YDBase<YDShareUser[]> data) {
+                if (data.getCode() != 1) {
+                    callBack.onError(data.getMessage());
+                    callBack.onComplete();
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        };
+        RetrofitUtil.getInstance().getComaiotShareUser(mEntitySubscriber, jwt, sn);
+    }
+
+    public static void updateDeviceName(String token, String sn, String reName, CallBack<YDBase> callBack) {
+        Subscriber<YDBase> mEntitySubscriber = new Subscriber<YDBase>() {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                callBack.onStart();
+            }
+
+            @Override
+            public void onCompleted() {
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onNext(YDBase data) {
+                if (data.getCode() != 1) {
+                    callBack.onError(data.getMessage());
+                    callBack.onComplete();
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        };
+        RetrofitUtil.getInstance().updateDeviceName(mEntitySubscriber, token, sn, reName);
+    }
+
+    public static void shareComaiotDevice(String token, String sn, String phoneNumber, CallBack<YDBase> callBack) {
+        Subscriber<YDBase> mEntitySubscriber = new Subscriber<YDBase>() {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                callBack.onStart();
+            }
+
+            @Override
+            public void onCompleted() {
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onNext(YDBase data) {
+                if (data.getCode() != 1) {
+                    callBack.onError(data.getMessage());
+                    callBack.onComplete();
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        };
+        RetrofitUtil.getInstance().shareComaiotDevice(mEntitySubscriber, token, sn, phoneNumber);
+    }
+
+    public static void deleteComaiotShare(String jwt, String sn, String phoneNumber, CallBack<YDBase> callBack) {
+        Subscriber<YDBase> mEntitySubscriber = new Subscriber<YDBase>() {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                callBack.onStart();
+            }
+
+            @Override
+            public void onCompleted() {
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onNext(YDBase data) {
+                if (data.getCode() != 1) {
+                    callBack.onError(data.getMessage());
+                    callBack.onComplete();
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        };
+        RetrofitUtil.getInstance().deleteComaiotShare(mEntitySubscriber, jwt, sn, phoneNumber);
+    }
+
+    public static void deleteComaiotDevice(String token, String sn, CallBack<YDBase> callBack) {
+        Subscriber<YDBase> mEntitySubscriber = new Subscriber<YDBase>() {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                callBack.onStart();
+            }
+
+            @Override
+            public void onCompleted() {
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onNext(YDBase data) {
+                if (data.getCode() != 1) {
+                    callBack.onError(data.getMessage());
+                    callBack.onComplete();
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        };
+        RetrofitUtil.getInstance().deleteComaiotDevice(mEntitySubscriber, token, sn);
+    }
+
+    public static void AppQueryAccountReq(String appUid, String appEnvid, String phoneNumber, String subscribe_type, CallBack<AppQueryAccountEntity> callBack) {
+        Subscriber<AppQueryAccountEntity> mEntitySubscriber = new Subscriber<AppQueryAccountEntity>() {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                callBack.onStart();
+            }
+
+            @Override
+            public void onCompleted() {
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+                callBack.onComplete();
+            }
+
+            @Override
+            public void onNext(AppQueryAccountEntity baseEntity) {
+                if (baseEntity.getErrcode() != 0) {
+                    Logger.ee("AppQueryAccountReq baseEntity.getErrcode(): \n" + baseEntity.getErrcode());
+                    callBack.onError(baseEntity.getErrcode() + "");
+                    callBack.onComplete();
+                } else {
+                    callBack.onSuccess(baseEntity);
+                }
+            }
+        };
+        RetrofitUtil.getInstance().AppQueryAccountReq(mEntitySubscriber, appUid, appEnvid, phoneNumber, subscribe_type);
     }
 }

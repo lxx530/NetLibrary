@@ -16,7 +16,9 @@ public class AppReceiveShareEntity extends BaseAppEntity {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "AppReceiveShareEntity{" +
+                "content=" + content +
+                '}';
     }
 
     public static class Content implements Serializable {
@@ -43,6 +45,14 @@ public class AppReceiveShareEntity extends BaseAppEntity {
 
         public void setAid(String aid) {
             this.aid = aid;
+        }
+
+        @Override
+        public String toString() {
+            return "Content{" +
+                    "dev_uid='" + dev_uid + '\'' +
+                    ", aid='" + aid + '\'' +
+                    '}';
         }
     }
 }

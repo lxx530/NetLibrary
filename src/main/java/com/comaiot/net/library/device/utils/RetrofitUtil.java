@@ -14,10 +14,13 @@ import com.comaiot.net.library.device.bean.DevQueryTimeEntity;
 import com.comaiot.net.library.device.bean.DevScanBarcodeEntity;
 import com.comaiot.net.library.device.bean.FaceverifyEntity;
 import com.comaiot.net.library.device.bean.WeatherEntity;
+import com.comaiot.net.library.device.bean.YDBase;
+import com.comaiot.net.library.device.bean.YDShareUser;
 import com.comaiot.net.library.device.inter.AgoraService;
 import com.comaiot.net.library.device.inter.BaiDuApiService;
 import com.comaiot.net.library.device.inter.BaiduOauthService;
 import com.comaiot.net.library.device.inter.DeviceGetWeatherService;
+import com.comaiot.net.library.device.inter.YdService;
 import com.comaiot.net.library.device.json_bean.ArogaLicensesParams;
 import com.comaiot.net.library.device.json_bean.DevLoginParams;
 import com.comaiot.net.library.device.json_bean.DevLogoutParams;
@@ -31,7 +34,9 @@ import com.comaiot.net.library.phone.bean.AppBindWeixinEntity;
 import com.comaiot.net.library.phone.bean.AppChangeAccountInfoEntity;
 import com.comaiot.net.library.phone.bean.AppChangePasswordEntity;
 import com.comaiot.net.library.phone.bean.AppChangePhoneEntity;
+import com.comaiot.net.library.phone.bean.AppQueryAccountEntity;
 import com.comaiot.net.library.phone.bean.AppQueryAidBindEntity;
+import com.comaiot.net.library.phone.bean.AppQuerySharedDeviceEntity;
 import com.comaiot.net.library.phone.bean.AppReceiveShareEntity;
 import com.comaiot.net.library.phone.bean.AppReceiveShareNumEntity;
 import com.comaiot.net.library.phone.bean.AppRemoveAidEntity;
@@ -59,6 +64,7 @@ import com.comaiot.net.library.phone.json_bean.AppBindWeixinParams;
 import com.comaiot.net.library.phone.json_bean.AppChangeAccountInfoParams;
 import com.comaiot.net.library.phone.json_bean.AppChangePasswordParams;
 import com.comaiot.net.library.phone.json_bean.AppChangePhoneParams;
+import com.comaiot.net.library.phone.json_bean.AppQueryAccountParams;
 import com.comaiot.net.library.phone.json_bean.AppQueryAidBindParams;
 import com.comaiot.net.library.phone.json_bean.AppReceiveShareParams;
 import com.comaiot.net.library.phone.json_bean.AppRemoveAidParams;
@@ -69,11 +75,14 @@ import com.comaiot.net.library.phone.json_bean.AppSubscribeParams;
 import com.comaiot.net.library.phone.json_bean.AppUnSubscribeParams;
 import com.comaiot.net.library.phone.json_bean.BindPhoneParams;
 import com.comaiot.net.library.phone.json_bean.RegParams;
+import com.comaiot.net.library.phone.json_bean.ShareParams;
 import com.comaiot.net.library.phone.json_bean.SmsParams;
 import com.comaiot.net.library.phone.json_bean.StorageParams;
+import com.comaiot.net.library.phone.json_bean.UpdateNameParams;
 import com.comaiot.net.library.phone.json_bean.YDLoginParams;
 import com.comaiot.net.library.phone.json_bean.YDRegParams;
 import com.comaiot.net.library.phone.okhttp.Logger;
+import com.comaiot.net.library.phone.view.GetComaiotShareUserView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -122,7 +131,7 @@ public class RetrofitUtil {
     private static final String BASE_URL = "https://free-api.heweather.com/";
     private static final String BAIDU_BASE_URL = "https://aip.baidubce.com/rest/2.0/face/v3/";
     private static final String BAIDU_OAUTH_URL = "https://aip.baidubce.com/oauth/2.0/";
-    private static String COMAIOT_BASE_URL;
+    private static final String COMAIOT_BASE_URL = "http://192.168.1.6:8998/cat/";
 
     private static final int DEFAULT_TIMEOUT = 15;
     private static Context mContext;
@@ -133,6 +142,7 @@ public class RetrofitUtil {
     private Retrofit mComaiotRetrofit;
     private Retrofit mAgoraRetrofit;
     private Retrofit mAgoraLicensesRetrofit;
+    private Retrofit mYdRetrofit;
 
     private DeviceGetWeatherService mWeatherService;
     private BaiDuApiService mBaiduApiService;
@@ -140,6 +150,7 @@ public class RetrofitUtil {
     private ComaiotService mComaiotService;
     private AgoraService mAgoraService;
     private AgoraService mAgoraLicensesService;
+    private YdService mYdService;
 
     private static RetrofitUtil mInstance;
 
@@ -288,12 +299,21 @@ public class RetrofitUtil {
                 .baseUrl(AGORA_LICENSES_URL)
                 .build();
 
+        //------------------------------yd-------------------------------//
+        mYdRetrofit = new Retrofit.Builder()
+                .client(builder.build())
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .baseUrl(COMAIOT_BASE_URL)
+                .build();
+
         mWeatherService = mRetrofit.create(DeviceGetWeatherService.class);
         mBaiduApiService = mBaiDuRetrofit.create(BaiDuApiService.class);
         mBaiduOauthService = mOauthRetrofit.create(BaiduOauthService.class);
         mComaiotService = mComaiotRetrofit.create(ComaiotService.class);
         mAgoraService = mAgoraRetrofit.create(AgoraService.class);
         mAgoraLicensesService = mAgoraLicensesRetrofit.create(AgoraService.class);
+        mYdService = mYdRetrofit.create(YdService.class);
     }
 
     /**
@@ -1118,6 +1138,81 @@ public class RetrofitUtil {
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
 
         mComaiotService.AccUpdateReq(requestBody)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    public void getComaiotShareUser(Subscriber<YDBase<YDShareUser[]>> subscriber, String jwt, String sn) {
+        mYdService.getShareList(jwt, sn)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    public void updateDeviceName(Subscriber<YDBase> subscriber, String token, String sn, String reName) {
+        UpdateNameParams params = new UpdateNameParams();
+        params.setSn(sn);
+        params.setRemark(reName);
+        String json = GsonUtils.toJson(params);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
+
+        mYdService.updateDeviceName(token, requestBody)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    public void shareComaiotDevice(Subscriber<YDBase> subscriber, String token, String sn, String phoneNumber) {
+        ShareParams params = new ShareParams();
+        params.setSn(sn);
+        params.setPhone_number(phoneNumber);
+        String json = GsonUtils.toJson(params);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
+
+        mYdService.shareDevice(token, requestBody)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    public void deleteComaiotShare(Subscriber<YDBase> subscriber, String jwt, String sn, String phoneNumber) {
+        ShareParams params = new ShareParams();
+        params.setSn(sn);
+        params.setPhone_number(phoneNumber);
+        String json = GsonUtils.toJson(params);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
+
+        mYdService.deleteShare(jwt, requestBody)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    public void deleteComaiotDevice(Subscriber<YDBase> subscriber, String token, String sn) {
+        mYdService.deleteDevice(token, sn)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    public void AppQueryAccountReq(Subscriber<AppQueryAccountEntity> subscriber, String appUid, String appEnvid, String phoneNumber, String subscribe_type) {
+        AppQueryAccountParams params = new AppQueryAccountParams();
+        params.setApp_uid(appUid);
+        params.setApp_envid(appEnvid);
+        params.setPhone_num(phoneNumber);
+        params.setSubscribe_type(subscribe_type);
+        String json = GsonUtils.toJson(params);
+        Logger.ee("AppQueryAccountReq Json : \n" + json);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
+
+        mComaiotService.AppQueryAccountReq(requestBody)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
